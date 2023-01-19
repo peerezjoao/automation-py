@@ -4,8 +4,12 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import date
+import pandas as pd
 import time
 import os
+
+df = pd.read_excel("C:\\Users\\peere\\automation-py\\stocks_automation\\templates\\FundsExplorer.xlsx")
+print(df)
 
 chromedrive = '.\stocks_automation\chromedriver.exe'
 
@@ -46,16 +50,21 @@ lista_elementos = driver.find_elements(By.CLASS_NAME, 'indicator-value')
 for ti, el in zip(lista_titulos, lista_elementos):
     print(f'{ti.text}: {el.text}')
     
+    df.loc[df['Fiis']=='HGLG11'].index
+    
+    
 print('Verificando se existe akgum relatório')
 lista_tabelas = driver.find_elements(By.ID, "DataTables_Table_0")
 
 print(date.today().strftime('%d/%m/%Y'))
 for item in lista_tabelas:
     print(item.text)
-    if (item.text == 'Relatórios' + date.today().strftime("%d/%m/%Y")):
-        print(f'Novo relatório disponível para baixar: {item.text} \n' +
+    if (item.text.__contains__("Relatórios")):
+        print(f'Relatório disponível para baixar: {item.text} \n' +
               'prerando para baixar relatório.')
         
+    if (item.text.__contains__("Fato Relevante")):
+        print('Fato relevante detectado.')
 
 time.sleep(10)
 print('Automação executada com sucesso.')
