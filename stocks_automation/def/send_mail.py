@@ -1,27 +1,43 @@
-import smtplib
-from os.path import basename
-from email.mime.text import MIMEText
+import os
+import pathlib
+from dotenv import load_dotenv
+from string import Template
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
 
-from_addr = 'echobotuipath@gmail.com'
-to_addr = 'peerezjoao1@gmail.com'
-subject = 'Relatório Gerencial disponível para download: '
-content = 'Segue o relatório gerencial do fundo:'
+load_dotenv()
 
-msg = MIMEMultipart()
-msg['From'] = from_addr
-msg['To'] = to_addr
-msg['Subject'] = subject
-body = MIMEText(content, 'plain')
-msg.attach(body)
+# dados do remetente
+remetente  = os.getenv('FROM_EMAIL')
+destinatario = os.getenv('FROM_EMAIL')
 
-filename = "C:\Users\peere\Downloads\DAS-PGMEI-44395425000112-AC2022 (1).pdf"
-with open(filename, 'r') as f:
-    attachment = MIMEApplication(f.read(), Name=basename(filename))
-    attachment['Content-Disposition'] - 'attachment; filename-"{}'.format(basename(filename))
-    
-    
-msg.attach(attachment)
+# Configuracoes do SMTP
+smtp_server = 'smtp.gmail.com'
+smtp_port = 587
+smtp_username = os.getenv('FROM_EMAIL', '')
+smtp_password = os.getenv('EMAIL_PASSWORD')
 
-server = smtplib.SMTP('smtp.dreamhost.com',587)
-server.login(from_addr, 'mystrongpw!')
+# mensagem de texto
+with open(CAMINHO_HTML, 'r') as corpo_email:
+    texto_arquivo = corpo_email.read()
+    template = Template(texto_arquivo)
+    #texto_email = template.substitute()
+
+# transformar corpo em MIMEMultipart
+
+mime_multipart = MIMEMultipart()
+mime_multipart['from'] = remetente
+mime_multipart['to'] =  destinatario
+mime_multipart['subject'] = 'Raspagem de dados.'
+
+corpo_email = MIMEText(texto_email, 'html', 'utf-8')
+mime_multipart.attach(corpo_email)
+ 
+
+with smtplib.SMTP(smtp_server, smtp_port) as server:
+    server.ehlo()
+    server.starttls()
+    server.login(smtp_username, smtp_password)
+    server.send_message(mime_multipart)
+    print('E-mail enviado com sucesso.')

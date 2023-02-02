@@ -1,0 +1,12 @@
+__pycahce__/ 
+*.py[cod]
+
+
+# environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
