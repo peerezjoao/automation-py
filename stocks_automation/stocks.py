@@ -53,15 +53,19 @@ for ti, el in zip(lista_titulos, lista_elementos):
     df.loc[df['Fiis']=='HGLG11'].index
     
     
-print('Verificando se existe akgum relatório')
+print('Verificando se existe algum relatório')
 lista_tabelas = driver.find_elements(By.ID, "DataTables_Table_0")
 
 print(date.today().strftime('%d/%m/%Y'))
-for item in lista_tabelas:
+for item, index in lista_tabelas:
     print(item.text)
-    if (item.text.__contains__("Relatórios")):
+    if (item.text.__contains__("Relatórios - ")):
         print(f'Relatório disponível para baixar: {item.text} \n' +
               'prerando para baixar relatório.')
+        driver.find_element(By.CLASS_NAME, "bulletin-list_view")[index].click()
+        driver.window_handles[1]
+        wait.until(EC.visibility_of_any_elements_located((By.XPATH, '//*[@id="icon"]/iron-icon//svg')))
+        
         
     if (item.text.__contains__("Fato Relevante")):
         print('Fato relevante detectado.')
